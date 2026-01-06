@@ -177,13 +177,13 @@ class Gui(App):
     def compose(self) -> ComposeResult:
         with Container(id="main_container"):
             with Vertical(id="header"):
-                yield Static("🔧 Configuration des Modules", id="title")
+                yield Static("Configuration des Modules", id="title")
                 
                 with Horizontal(id="user_section"):
                     rs = RadioSet(id="user_select")
                     rs.border_title = "Type d'utilisateur"
-                    rs._add_child(RadioButton("👤 CLIENT", id="rb_client", value=True))
-                    rs._add_child(RadioButton("🖥️  SERVER", id="rb_server"))
+                    rs._add_child(RadioButton("CLIENT", id="rb_client", value=True))
+                    rs._add_child(RadioButton("SERVER", id="rb_server"))
                     yield rs
 
             with VerticalScroll(id="content"):
@@ -191,7 +191,7 @@ class Gui(App):
                 
                 for category, items in self.__MODULES.items():
                     with Container(classes="category_container"):
-                        yield Static(f"📦 {category}", classes="category_title")
+                        yield Static(f"{category}", classes="category_title")
                         
                         with Vertical(classes="checkbox_container"):
                             self.checkboxes[category] = []
@@ -205,7 +205,7 @@ class Gui(App):
                                 yield cb
 
             with Container(id="footer"):
-                yield Button("✓ Valider la sélection", id="go", variant="success")
+                yield Button("Valider la sélection", id="go", variant="success")
 
     def on_radio_set_changed(self, event: RadioSet.Changed) -> None:
         pressed = event.pressed
