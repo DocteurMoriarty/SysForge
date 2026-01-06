@@ -17,11 +17,11 @@ def as_text(label) -> str:
 
 
 class Gui(App):
-    """UI moderne avec design épuré et sélection des modules."""
+    """UI épurée et simple avec collapsibles."""
 
     def __init__(self):
         super().__init__()
-        self._USER: str | None = None
+        self._USER: str | None = "CLIENT"
         self.__MODULES: Dict[str, List[str]] = {
             "VIRTUALISATION": [
                 "Docker",
@@ -67,145 +67,120 @@ class Gui(App):
                 "GraphQL",
             ],
         }
-
+        
         self.__DEFAULT: Dict[str, List[bool]] = {
-            "VIRTUALISATION": [False],
-            "NAVIGATEUR": [False],
-            "SECURITE": [False],
-            "RESEAU": [False],
-            "OUTILS": [False],
-            "SERVICES": [False],
+            "VIRTUALISATION": [False, False],
+            "NAVIGATEUR": [False, False, False, False, False, False, False, False],
+            "SECURITE": [False, False, False, False, False, False],
+            "RESEAU": [False, False, False],
+            "OUTILS": [False, False, False, False, False],
+            "SERVICES": [False, False, False, False, False, False, False],
         }
 
     CSS = """
     Screen {
-        align: center middle;
-        background: $surface;
+        background: #1a1a1a;
     }
     
-    #main_container {
-        width: 80;
-        height: 90vh;
-        background: $panel;
-        border: thick $primary;
-        border-title-align: center;
-    }
-    
-    #header {
-        height: auto;
+    #app {
         width: 100%;
-        padding: 1 2;
-        background: $primary-background;
-        border-bottom: solid $primary;
+        height: 100%;
+        padding: 2 4;
     }
     
     #title {
         text-style: bold;
-        color: $text;
+        color: #ffffff;
         text-align: center;
-        padding-bottom: 1;
+        padding: 1 0 2 0;
     }
     
     #user_section {
-        height: auto;
         width: 100%;
-        padding: 1 2;
+        height: auto;
+        padding: 0 0 2 0;
         align: center middle;
     }
     
     #user_select {
-        width: auto;
-        height: auto;
-        background: $surface;
-        border: solid $accent;
-        padding: 0 1;
+        width: 50;
+        border: solid #4a9eff;
     }
     
     RadioButton {
-        padding: 0 2;
+        padding: 0 1;
     }
     
     #content {
         width: 100%;
         height: 1fr;
-        padding: 2;
-        background: $surface;
     }
     
     Collapsible {
         width: 100%;
+        background: #2a2a2a;
+        border: solid #3a3a3a;
         margin-bottom: 1;
-        border: solid $accent;
-        background: $panel;
+    }
+    
+    Collapsible:focus {
+        border: solid #4a9eff;
     }
     
     Collapsible > Contents {
-        padding: 1 2;
+        padding: 1;
     }
     
     Checkbox {
-        margin: 0;
-        padding: 0;
+        padding: 0 0 0 2;
     }
     
     #footer {
-        height: auto;
         width: 100%;
-        padding: 1 2;
+        height: auto;
+        padding: 2 0 0 0;
         align: center middle;
-        background: $panel;
-        border-top: solid $primary;
     }
     
     #go {
-        width: 30;
-        min-width: 20;
-        background: $success;
-        color: $text;
-        border: none;
+        width: 40;
+        background: #28a745;
+        color: white;
     }
     
     #go:hover {
-        background: $success-darken-1;
-    }
-    
-    #go:focus {
-        background: $success-darken-2;
+        background: #218838;
     }
     """
 
     def compose(self) -> ComposeResult:
-        with Container(id="main_container"):
-            with Vertical(id="header"):
-                yield Static("Configuration des Modules", id="title")
-                
-                with Horizontal(id="user_section"):
-                    rs = RadioSet(id="user_select")
-                    rs.border_title = "Type d'utilisateur"
-                    rs._add_child(RadioButton("CLIENT", id="rb_client", value=True))
-                    rs._add_child(RadioButton("SERVER", id="rb_server"))
-                    yield rs
+        with Container(id="app"):
+            yield Static("⚙️  Configuration des Modules", id="title")
+            
+            with Horizontal(id="user_section"):
+                rs = RadioSet(id="user_select")
+                rs.border_title = "Profil"
+                rs._add_child(RadioButton("CLIENT", id="rb_client", value=True))
+                rs._add_child(RadioButton("SERVER", id="rb_server"))
+                yield rs
 
             with VerticalScroll(id="content"):
                 self.checkboxes: Dict[str, List[Checkbox]] = {}
                 
                 for category, items in self.__MODULES.items():
-                    with Container(classes="category_container"):
-                        yield Static(f"{category}", classes="category_title")
+                    with Collapsible(title=category, collapsed=True):
+                        self.checkboxes[category] = []
+                        defaults = self.__DEFAULT.get(category, [False] * len(items))
+                        if len(defaults) < len(items):
+                            defaults = defaults + [False] * (len(items) - len(defaults))
                         
-                        with Vertical(classes="checkbox_container"):
-                            self.checkboxes[category] = []
-                            defaults = self.__DEFAULT.get(category, [False] * len(items))
-                            if len(defaults) < len(items):
-                                defaults = defaults + [False] * (len(items) - len(defaults))
-                            
-                            for i, item in enumerate(items):
-                                cb = Checkbox(label=str(item), value=defaults[i])
-                                self.checkboxes[category].append(cb)
-                                yield cb
+                        for i, item in enumerate(items):
+                            cb = Checkbox(label=str(item), value=defaults[i])
+                            self.checkboxes[category].append(cb)
+                            yield cb
 
             with Container(id="footer"):
-                yield Button("Valider la sélection", id="go", variant="success")
+                yield Button("✓ Valider", id="go", variant="success")
 
     def on_radio_set_changed(self, event: RadioSet.Changed) -> None:
         pressed = event.pressed
@@ -219,19 +194,6 @@ class Gui(App):
                 category: [as_text(cb.label) for cb in cbs if cb.value]
                 for category, cbs in self.checkboxes.items()
             }
-            result = {
-                "user": self._USER,
-                "modules": selection
-            }
+            result = {"user": self._USER, "modules": selection}
             self.exit(result)
 
-
-if __name__ == "__main__":
-    app = Gui()
-    result = app.run()
-    
-    print(f"\nProfil: {result['user']}")
-    print("Modules sélectionnés:")
-    for cat, items in result['modules'].items():
-        if items:
-            print(f"  {cat}: {', '.join(items)}")

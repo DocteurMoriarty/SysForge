@@ -14,6 +14,14 @@ def main():
     selection = Gui().run()
     if selection is None:
         return 1
+    if selection:
+        print(f"\nProfil: {selection['user']}")
+        print("\nModules sélectionnés:")
+        for cat, items in selection['modules'].items():
+            if items:
+                print(f"  • {cat}: {', '.join(items)}")
+
+
 
     run = Run()
 
