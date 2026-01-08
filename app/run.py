@@ -1,5 +1,12 @@
 # Imports
 from typing import List
+from app.core.languages import LanguagesSoftware
+from app.core.messaging import DiscordInstallerDEB
+from app.core.security import SecuritySoftware
+from app.core.messaging import SignalInstallerDEB
+from app.core.messaging import SessionInstallerDEB
+from app.core.virtu import VirtualisationSoftware
+from app.core.browser import Browser
 
 
 class Run:
@@ -134,6 +141,69 @@ class Run:
             if not isinstance(soft, str):
                 raise TypeError("Params : soft is not a string")
             self.__soft.append(soft)
+
+    def check_packages_install(self):
+        """
+        Check if all packages are installed.
+        """
+
+        for item in self.__soft:
+            match item:
+                case "Rust":
+                    r = LanguagesSoftware()
+                    r.install_rust()
+                case "Docker":
+                    d = VirtualisationSoftware()
+                    d.delete_packages()
+                    d.setup_docker_repository()
+                case "Python":
+                    pass
+                case "PHP":
+                    p = LanguagesSoftware()
+                    p.install_php()
+                case "Session":
+                    s = SessionInstallerDEB()
+                    s.apply()
+                case "Signal":
+                    s = SignalInstallerDEB()
+                    s.apply()
+                case "Discord":
+                    d = DiscordInstallerDEB()
+                    d.apply()
+                case "Nmap":
+                    n = SecuritySoftware()
+                    n.install_nmap()
+                case "Wireshark":
+                    w = SecuritySoftware()
+                    w.install_wireshark()
+                case "UFW":
+                    u = SecuritySoftware()
+                    u.install_ufw()
+                case "Fail2Ban":
+                    f = SecuritySoftware()
+                    f.install_fail2ban()
+                case "ClamAV":
+                    c = SecuritySoftware()
+                    c.install_clamav()
+                case "Rkhunter":
+                    r = SecuritySoftware()
+                    r.install_rkhunter()
+                case "Chkrootkit":
+                    c = SecuritySoftware()
+                    c.install_chkrootkit()
+                case "Lynis":
+                    l = SecuritySoftware()
+                    l.install_lynis()
+                case "OpenVAS":
+                    o = SecuritySoftware()
+                    o.install_openvas()
+                case "Metasploit":
+                    m = SecuritySoftware()
+                    m.install_metasploit()
+                case "Tor Browser":
+                    t = Browser()
+                    t.browser_choice(["tor_browser"])
+
 
     def __repr__(
         self

@@ -26,6 +26,10 @@ class Gui(App):
             "VIRTUALISATION": [
                 "Docker",
                 "Podman",
+                "Kubernetes",
+                "VMware Workstation",
+                "QEMU",
+                "KVM"
             ],
             "NAVIGATEUR": [
                 "Tor Browser",
@@ -44,6 +48,13 @@ class Gui(App):
                 "AppArmor",
                 "Auditd",
                 "SELinux",
+                "ClamAV", 
+                "Chkrootkit", 
+                "Lynis", 
+                "Rkhunter", 
+                "OpenVAS", 
+                "Nmap", 
+                "Wireshark", 
             ],
             "RESEAU": [
                 "WireGuard",
@@ -53,29 +64,80 @@ class Gui(App):
             "OUTILS": [
                 "GnuPG",
                 "KeePassXC",
+                "KeePass",
+                "KeePass2",
                 "HTop",
                 "Curl",
                 "Wget",
+                "Git",
+                "Terminator",
+                "Tmux",
+                "Vim",
+                "Nano",
+            ],
+            "LANGUAGES": [
+                "Python",
+                "Node.js",
+                "Go",
+                "Rust",
+                "Java",
+                "C/C++",
+                "Ruby",
+                "PHP",
             ],
             "SERVICES": [
+                "OpenSSH-server",
                 "OpenSSH",
+                "Termus",
+                "MobaXTerm",
                 "Nginx",
                 "PostgreSQL",
                 "MySQL",
                 "MariaDB",
                 "MongoDB",
                 "GraphQL",
+                "Redis",
+                "Apache",
             ],
+            "MESSAGERIES": [
+                "Session",
+                "Signal",
+                "Discord",
+                "FluffyChat,"
+            ],
+            "WALLET": [
+                "Feather Wallet",
+            ],
+            "DEVOPS": [
+                "Terraform",
+                "Ansible",
+                "Jenkins",
+                "Gitlab CI",
+            ],
+            "MONITORING": [
+                "Prometheus", 
+                "Grafana", 
+                "Zabbix", 
+                "Nagios", 
+                "Netdata", 
+                "Cacti",
+            ]
         }
         
         self.__DEFAULT: Dict[str, List[bool]] = {
-            "VIRTUALISATION": [False, False],
-            "NAVIGATEUR": [False, False, False, False, False, False, False, False],
-            "SECURITE": [False, False, False, False, False, False],
-            "RESEAU": [False, False, False],
-            "OUTILS": [False, False, False, False, False],
-            "SERVICES": [False, False, False, False, False, False, False],
+            "VIRTUALISATION": [False] * 6,
+            "NAVIGATEUR": [False] * 8,
+            "SECURITE": [False] * 16,
+            "RESEAU": [False] * 3,
+            "OUTILS": [False] * 12,
+            "LANGUAGES": [False] * 8, 
+            "SERVICES": [False] * 9,
+            "MESSAGERIES": [False] * 4,
+            "WALLET": [False] * 1,
+            "DEVOPS": [False] * 4,
+            "MONITORING": [False] * 6
         }
+
 
     CSS = """
     Screen {

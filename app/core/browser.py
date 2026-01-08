@@ -1,18 +1,23 @@
 # Imports
 from typing import List
+import re, requests, subprocess, os
+from pathlib import Path
 
 class Browser:
     
-    def __init__(self, browser: List[str]) -> None:
-        self.__browsers: List[str] = browser
-    
+    def __init__(self) -> None:
+        self.__TOR_BASE = "https://dist.torproject.org/torbrowser/"
+
+    def run(self, cmd, check=True) -> None:
+        subprocess.run(cmd, check=check)
+
     def browser_choice(
         self, 
         browsers: List[str]
-    ) -> function:
+    ) -> None:
         for browser in browsers:
             match browser:
-                case "tor":
+                case "tor_browser":
                     return self.tor_browser()
                 case "firefox":
                     return self.firefox_browser()
@@ -28,6 +33,7 @@ class Browser:
                     return self.waterfox_browser()
                 case "librewolf":
                     return self.librewolf_browser()
+                
     def tor_browser(
         self
     ) -> None:
@@ -66,3 +72,12 @@ class Browser:
         self
     ) -> None:
         pass
+
+    def get_latest_tor_version(self) -> str:
+        r = requests.get(self.__TOR_BASE, timeout=10)
+        r.raise_for_status()
+        versions = re.findall(r'href="(\d+\.\d+\.\d+)/"', r.text)
+        if not versions:
+            raise RuntimeError("Unable to detect Tor Browser versions")
+        versions.sort(key=lambda v: list(map(int, v.split("."))))
+        return versions[-1]

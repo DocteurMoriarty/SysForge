@@ -5,29 +5,19 @@ from app.utils.system import is_admin, get_os_info
 
 
 def main():
-    os_info = get_os_info()
-
-    if os_info["system"] in ("Linux", "Darwin"):
-        if not is_admin():
-            raise PermissionError("This program must be run as root (sudo).")
+    print(get_os_info())
 
     selection = Gui().run()
+    run       = Run()
+
     if selection is None:
         return 1
     if selection:
-        print(f"\nProfil: {selection['user']}")
-        print("\nModules sélectionnés:")
+        run.user = selection['user']
+        print(run)
         for cat, items in selection['modules'].items():
             if items:
-                print(f"  • {cat}: {', '.join(items)}")
-
-
-
-    run = Run()
-
-    for _, items in selection.items():
-        if items:
-            run.multi_soft(*items)
-
-    print(run)
+                run.multi_soft(*items)
+                print(run.soft)
+        run.check_packages_install()
     return 0
